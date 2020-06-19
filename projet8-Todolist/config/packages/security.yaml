@@ -1,33 +1,38 @@
 security:
     encoders:
-        AppBundle\Entity\User: bcrypt
+        App\Entity\User:
+            algorithm: bcrypt
 
     providers:
-        doctrine:
+        in_memory: { memory: null }
+        in_database:
             entity:
-                class: App:User
+                class: App\Entity\User
                 property: username
 
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
         main:
-            logout_on_user_change: true
-            anonymous: ~
-            pattern: ^/
+            anonymous: lazy
+            provider: in_database
+
             form_login:
                 login_path: login
                 check_path: login_check
                 always_use_default_target_path:  true
-                default_target_path:  /
-            logout: ~
+                default_target_path:  /tasks
+
+            logout:
+                path: /logout
+                target: /
+                invalidate_session: true
             guard:
                 authenticators:
                     - App\Security\AppAuthenticator
 
     access_control:
-        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/users, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, roles: ROLE_USER }
+    # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    #- { path: ^/users, roles: ROLE_ADMIN }
+    #- { path: ^/tasks, roles: IS_AUTHENTICATED_FULLY }

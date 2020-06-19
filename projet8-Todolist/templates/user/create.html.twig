@@ -1,14 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block header_title %}<h1>Créer un utilisateur</h1>{% endblock %}
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block header_title %}
+    {%  if editMode %}
+        <h1>Modifier un utilisateur</h1>
+    {%  else  %}
+        <h1>Créer un utilisateur</h1>
+    {%  endif  %}
+{% endblock %}
 {% block header_img %}{% endblock %}
 
 {% block body %}
     <div class="row">
-        {{ form_start(form, {'action' : path('user_create')}) }}
-            {{ form_widget(form) }}
 
-            <button type="submit" class="btn btn-success pull-right">Ajouter</button>
-        {{ form_end(form) }}
+        {{ form_start(form) }}
+
+        {{ form_row(form.username) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.password) }}
+        {{ form_row(form.roles.0) }}
+        {{ form_row(form._token) }}
+
+        <button type="submit" class="btn btn-success">
+            {%  if editMode %}
+                Enregistrer les modifications
+            {%  else  %}
+                Ajouter
+            {%  endif  %}
+        </button>
+        {{  form_end(form, {'render_rest': false}) }}
+
     </div>
 {% endblock %}
