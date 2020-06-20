@@ -28,6 +28,8 @@ class UserController extends AbstractController
      */
     public function createAction(User $user = null, Request $request,UserPasswordEncoderInterface $encoder)
     {
+
+
         if (!$user) {
             $user = new User();
         }
@@ -40,14 +42,16 @@ class UserController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $password = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
-            $em->persist($user);
-            $em->flush();
 
             if (!$user->getId()) {
                 $this->addFlash('success', "L'utilisateur a bien été ajouté.");
             } else {
                 $this->addFlash('success', "L'utilisateur a bien été modifié.");
             }
+
+            $em->persist($user);
+            $em->flush();
+
 
             return $this->redirectToRoute('user_list');
         }
