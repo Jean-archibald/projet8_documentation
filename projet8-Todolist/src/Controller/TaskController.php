@@ -7,11 +7,13 @@ use App\Form\TaskType;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class TaskController extends AbstractController
 {
     /**
      * @Route("/tasks", name="task_list")
+     *  @IsGranted("ROLE_USER")
      */
     public function listAction()
     {
@@ -20,17 +22,19 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/tasks/create", name="task_create")
+     *  @IsGranted("ROLE_USER")
      */
     public function createAction(Request $request)
     {
         $task = new Task();
         $form = $this->createForm(TaskType::class, $task);
+        $user = $this->getUser();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-
+            $task->setUser($user);
             $em->persist($task);
             $em->flush();
 
@@ -44,6 +48,7 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/tasks/{id}/edit", name="task_edit")
+     *  @IsGranted("ROLE_USER")
      */
     public function editAction(Task $task, Request $request)
     {
@@ -67,6 +72,7 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/tasks/{id}/toggle", name="task_toggle")
+     *  @IsGranted("ROLE_USER")
      */
     public function toggleTaskAction(Task $task)
     {
@@ -80,15 +86,29 @@ class TaskController extends AbstractController
 
     /**
      * @Route("/tasks/{id}/delete", name="task_delete")
+     *  @IsGranted("ROLE_USER")
      */
     public function deleteTaskAction(Task $task)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
+        $user = $this->getUser();
+        $arrayRoles = $user->getRoles();
+        $roles0 = $arrayRoles[0];
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
+
+        $em = $this->getDoctrine()->getManager();
+        if ($task->getUser() == $user) {
+            $em->remove($task);
+            $em->flush();
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+        } elseif ($task->getUser() == null && $roles0 == "ROLE_ADMIN") {
+            $em->remove($task);
+            $em->flush();
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
+        }else{
+            $this->addFlash('error', 'Vous ne pouvez pas supprimer la tâche.');
+        }
 
         return $this->redirectToRoute('task_list');
     }
 }
+
