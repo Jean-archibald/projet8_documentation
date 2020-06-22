@@ -6,8 +6,20 @@ Base du projet #8 : Améliorez un projet existant
 https://openclassrooms.com/projects/ameliorer-un-projet-existant-1
 
 
+
+
 Version du projet amélioré:
-Source sur git : https://github.com/Jean-archibald/projet8_documentation.git
+Source sur git : https://github.com/Jean-archibald/projet8_documentation
+
+INSTALLER LE PROJET DEPUIS GIT:
+
+Créer un dossier, ouvrez le dans votre IDE, puis placez vous à la racine du projet depuis votre CLI et tapez 
+
+git init
+
+puis
+
+git clone https://github.com/Jean-archibald/projet8_documentation.git
 
 VERSION DU PROJET :
 
@@ -62,6 +74,11 @@ Pour se connecter en tant que Utilisateur voici les identifiants :
 username : Utilisateur
 
 password : test
+
+L'ENSEMBLE DES FICHIERS HTML DU CODE-COVERAGE SONT ICI :
+
+Projet8-todolist/public/test-coverage/
+
 
 
 
